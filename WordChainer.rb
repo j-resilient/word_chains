@@ -17,18 +17,31 @@ class WordChainer
         @all_seen_words = []
     end
 
-    # def run(source, target)
-    #     @current_words << source
-    #     @all_seen_words << source
+    def run(source, target)
+        @current_words << source
+        @all_seen_words << source
 
-    #     until @current_words.empty?
-    #         new_current_words = []
+        until @current_words.empty?
+            new_current_words = []
 
-    #     end
-    # end
+            @current_words.each do |current_word|
+                adjacent_words(current_word).each do |adj_word|
+                    if !@all_seen_words.include?(adj_word)
+                        new_current_words << adj_word
+                        @all_seen_words << adj_word
+                    end
+                end
+            end
+
+            print new_current_words
+            puts
+            puts
+            @current_words = new_current_words
+        end
+    end
 end
 
 if __FILE__ == $PROGRAM_NAME
     x = WordChainer.new("dictionary.txt")
-    puts x.adjacent_words("cat")
+    x.run("duck", "ruby")
 end
