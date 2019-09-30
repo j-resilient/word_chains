@@ -1,4 +1,5 @@
 require 'set'
+require 'byebug'
 class WordChainer
     def adjacent_words(word)
         @dict.select { |term| word.length == term.length && is_one_letter_different?(word, term) }
@@ -25,19 +26,24 @@ class WordChainer
             new_current_words = []
 
             @current_words.each do |current_word|
-                adjacent_words(current_word).each do |adj_word|
-                    if !@all_seen_words.include?(adj_word)
-                        new_current_words << adj_word
-                        @all_seen_words << adj_word
-                    end
-                end
+                new_current_words += explore_current_words(current_word)
             end
 
             print new_current_words
-            puts
-            puts
             @current_words = new_current_words
         end
+
+    end
+
+    def explore_current_words(current_word)
+        new_current_words = []
+        adjacent_words(current_word).each do |adj_word|
+            if !@all_seen_words.include?(adj_word)
+                new_current_words << adj_word
+                @all_seen_words << adj_word
+            end
+        end
+        new_current_words
     end
 end
 
