@@ -1,8 +1,10 @@
 require 'set'
 require 'byebug'
 class WordChainer
+    attr_reader :dict
+
     def adjacent_words(word)
-        @dict.select { |term| word.length == term.length && is_one_letter_different?(word, term) }
+        dict.select { |term| word.length == term.length && is_one_letter_different?(word, term) }
     end
 
     def is_one_letter_different?(word1, word2)
@@ -14,14 +16,17 @@ class WordChainer
     def initialize(dictionary_file_name)
         @dict = Set.new
         File.open(dictionary_file_name, 'r').each { |word| @dict << word.chomp }
-        @current_words = []
-        @all_seen_words = {}
     end
 
     def run(source, target)
-        @current_words << source
-        @all_seen_words[source] = nil
+        @current_words = [source]
+        @all_seen_words = { source => nil}
 
+        get_related_words(target)
+        puts build_path(target)
+    end
+
+    def get_related_words(target)
         until @current_words.empty? || @all_seen_words.include?(target)
             new_current_words = []
 
@@ -29,12 +34,8 @@ class WordChainer
                 new_current_words += explore_current_words(current_word)
             end
 
-            # new_current_words.each { |word| print "#{@all_seen_words[word]}: #{word}    "}
             @current_words = new_current_words
         end
-
-        puts build_path(target)
-
     end
 
     def explore_current_words(current_word)
