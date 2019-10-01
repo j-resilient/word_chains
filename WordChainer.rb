@@ -4,13 +4,15 @@ class WordChainer
     attr_reader :dict
 
     def adjacent_words(word)
-        dict.select { |term| word.length == term.length && is_one_letter_different?(word, term) }
-    end
-
-    def is_one_letter_different?(word1, word2)
-        count = 0
-        word2.each_char.with_index { |char, idx| count += 1 if char != word1[idx] }
-        count == 1
+        adjacent_words = []
+        word.each_char.with_index do |old_letter, idx|
+            ('a'..'z').each do |new_letter|
+                next if old_letter == new_letter
+                new_word = word[0...idx] + new_letter + word[idx + 1..-1]
+                adjacent_words << new_word if dict.include?(new_word)
+            end
+        end
+        adjacent_words
     end
     
     def initialize(dictionary_file_name)
